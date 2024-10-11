@@ -76,11 +76,11 @@ function CreateTaskPage() {
     toast.promise(taskPromise, {
       loading: "Creating Task...",
       success: (data: any) => {
+        navigate(`/task/${data.task.id}`);
         return data.message;
       },
       error: (error: any) => {
-        console.log(error);
-        return "Something went wrong";
+        return error.message || "Something went wrong";
       },
     });
   }
@@ -203,9 +203,7 @@ function CreateTaskPage() {
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) =>
-                              date < new Date() || date < new Date("1900-01-01")
-                            }
+                            disabled={(date) => date < new Date()}
                             initialFocus
                           />
                         </PopoverContent>

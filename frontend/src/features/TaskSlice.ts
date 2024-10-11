@@ -75,6 +75,85 @@ export const fetchGetUserTasks = createAsyncThunk(
   }
 );
 
+export const fetchGetTask = createAsyncThunk(
+  "get/task",
+  async (id: string, { rejectWithValue, getState }) => {
+    try {
+      const { user: { userInfo } = {} } = getState() as RootState;
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userInfo?.access}`,
+        },
+      };
+      const { data } = await axios.get(
+        `${baseUrl}/api/tasks/get/${id}/`,
+        config
+      );
+      return data;
+    } catch (error: any) {
+      const errorMessage =
+        error.response && error.response.data
+          ? error.response.data.message
+          : error.message;
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
+export const fetchUpdateTask = createAsyncThunk(
+  "update/task",
+  async (task: any, { rejectWithValue, getState }) => {
+    try {
+      const { user: { userInfo } = {} } = getState() as RootState;
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userInfo?.access}`,
+        },
+      };
+      const { data } = await axios.patch(
+        `${baseUrl}/api/tasks/update/${task.id}/`,
+        task,
+        config
+      );
+      return data;
+    } catch (error: any) {
+      const errorMessage =
+        error.response && error.response.data
+          ? error.response.data.message
+          : error.message;
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
+export const fetchDeleteTask = createAsyncThunk(
+  "delete/task",
+  async (id: string, { rejectWithValue, getState }) => {
+    try {
+      const { user: { userInfo } = {} } = getState() as RootState;
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userInfo?.access}`,
+        },
+      };
+      const { data } = await axios.delete(
+        `${baseUrl}/api/tasks/delete/${id}/`,
+        config
+      );
+      return data;
+    } catch (error: any) {
+      const errorMessage =
+        error.response && error.response.data
+          ? error.response.data.message
+          : error.message;
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
 const taskSlice = createSlice({
   name: "task",
   initialState: {
@@ -85,6 +164,18 @@ const taskSlice = createSlice({
     getUserTasks: [],
     getUserTasksStatus: "idle",
     getUserTasksError: {},
+
+    getTask: {},
+    getTaskStatus: "idle",
+    getTaskError: {},
+
+    updateTask: {},
+    updateTaskStatus: "idle",
+    updateTaskError: {},
+
+    deleteTask: {},
+    deleteTaskStatus: "idle",
+    deleteTaskError: {},
 
     tasks: [],
   },
@@ -98,6 +189,16 @@ const taskSlice = createSlice({
       state.getUserTasks = [];
       state.getUserTasksStatus = "idle";
       state.getUserTasksError = {};
+    },
+    resetUpdateTask: (state) => {
+      state.updateTask = {};
+      state.updateTaskStatus = "idle";
+      state.updateTaskError = {};
+    },
+    resetDeleteTask: (state) => {
+      state.deleteTask = {};
+      state.deleteTaskStatus = "idle";
+      state.deleteTaskError = {};
     },
     AddTasks(state: any, action) {
       state.tasks = state.tasks
@@ -132,10 +233,52 @@ const taskSlice = createSlice({
       .addCase(fetchGetUserTasks.rejected, (state, action) => {
         state.getUserTasksStatus = "failed";
         state.getUserTasksError = action.payload || "Get user tasks failed";
+      })
+
+      .addCase(fetchGetTask.pending, (state) => {
+        state.getTaskStatus = "loading";
+      })
+      .addCase(fetchGetTask.fulfilled, (state, action) => {
+        state.getTaskStatus = "succeeded";
+        state.getTask = action.payload;
+      })
+      .addCase(fetchGetTask.rejected, (state, action) => {
+        state.getTaskStatus = "failed";
+        state.getTaskError = action.payload || "Get task failed";
+      })
+
+      .addCase(fetchUpdateTask.pending, (state) => {
+        state.updateTaskStatus = "loading";
+      })
+      .addCase(fetchUpdateTask.fulfilled, (state, action) => {
+        state.updateTaskStatus = "succeeded";
+        state.updateTask = action.payload;
+      })
+      .addCase(fetchUpdateTask.rejected, (state, action) => {
+        state.updateTaskStatus = "failed";
+        state.updateTaskError = action.payload || "Update task failed";
+      })
+
+      .addCase(fetchDeleteTask.pending, (state) => {
+        state.deleteTaskStatus = "loading";
+      })
+      .addCase(fetchDeleteTask.fulfilled, (state, action) => {
+        state.deleteTaskStatus = "succeeded";
+        state.deleteTask = action.payload;
+      })
+      .addCase(fetchDeleteTask.rejected, (state, action) => {
+        state.deleteTaskStatus = "failed";
+        state.deleteTaskError = action.payload || "Delete task failed";
       });
   },
 });
 
-export const { resetCreateTask, resetGetUserTasks, AddTasks, resetTasks } =
-  taskSlice.actions;
+export const {
+  resetCreateTask,
+  resetGetUserTasks,
+  resetUpdateTask,
+  resetDeleteTask,
+  AddTasks,
+  resetTasks,
+} = taskSlice.actions;
 export default taskSlice.reducer;
