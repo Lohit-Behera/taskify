@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "corsheaders",
     
     'customuser.apps.CustomuserConfig',
+    'task.apps.TaskConfig',
     
 ]
 

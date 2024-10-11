@@ -26,7 +26,7 @@ export const fetchRegister = createAsyncThunk(
         user,
         config
       );
-      return data.data;
+      return data;
     } catch (error: any) {
       const errorMessage =
         error.response && error.response.data
@@ -54,7 +54,7 @@ export const fetchLogin = createAsyncThunk(
       document.cookie = `userInfoTaskify=${encodeURIComponent(
         JSON.stringify(data.data)
       )}; path=/; max-age=${60 * 24 * 60 * 60}; secure; sameSite=None;`;
-      return data;
+      return data.data;
     } catch (error: any) {
       const errorMessage =
         error.response && error.response.data

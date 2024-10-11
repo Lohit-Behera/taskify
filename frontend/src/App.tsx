@@ -11,6 +11,7 @@ import Layout from "./Layout";
 import HomePage from "./Pages/HomePage";
 import SignUpPage from "./Pages/SignUpPage";
 import LoginPage from "./Pages/LoginPage";
+import CreateTaskPage from "./Pages/CreateTaskPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -18,6 +19,7 @@ const router = createBrowserRouter(
       <Route index element={<HomePage />} />
       <Route path="/sign-up" element={<SignUpPage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/create-task" element={<CreateTaskPage />} />
     </Route>
   )
 );
