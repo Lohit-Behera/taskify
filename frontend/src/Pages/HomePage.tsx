@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,7 +6,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -16,6 +15,7 @@ import {
   resetGetUserTasks,
   resetTasks,
 } from "@/features/TaskSlice";
+import { format } from "date-fns";
 
 function HomePage() {
   const dispatch = useDispatch<any>();
@@ -27,7 +27,6 @@ function HomePage() {
     (state: any) => state.task.getUserTasksStatus
   );
   const tasks = useSelector((state: any) => state.task.tasks);
-  console.log(tasks);
 
   useEffect(() => {
     if (!userInfo) {
@@ -58,16 +57,7 @@ function HomePage() {
             user: number;
             created_at: string;
           }) => (
-            <Card
-              key={task.id}
-              className={`${
-                task.status === "In Progress"
-                  ? "bg-amber-400/30"
-                  : task.status === "Pending"
-                  ? "bg-red-400/30"
-                  : "bg-green-400/30 "
-              }`}
-            >
+            <Card key={task.id}>
               <CardHeader>
                 <Link to={`/task/${task.id}`}>
                   <CardTitle className="font-bold hover:underline">
@@ -78,14 +68,50 @@ function HomePage() {
                   {task.description}
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <p>Priority: {task.priority}</p>
-                <p>Status: {task.status}</p>
-                <p>Due Date: {task.due_date}</p>
+              <CardContent className="grid gap-4">
+                <span
+                  className={`flex justify-center space-x-1 w-32 p-2 rounded-full ${
+                    task?.priority === "Low"
+                      ? "bg-green-500/40"
+                      : task?.priority === "Medium"
+                      ? "bg-orange-500/40"
+                      : "bg-red-500/40"
+                  }`}
+                >
+                  <span
+                    className={`w-2 h-2 rounded-full mt-[9px] ${
+                      task?.priority === "Low"
+                        ? "bg-green-500"
+                        : task?.priority === "Medium"
+                        ? "bg-orange-500"
+                        : "bg-red-500"
+                    }`}
+                  ></span>
+                  <p>{task?.priority}</p>
+                </span>
+                <span
+                  className={`flex justify-center space-x-1 p-2 rounded-full w-32 ${
+                    task?.status === "Pending"
+                      ? "bg-gray-500/40"
+                      : task?.status === "In Progress"
+                      ? "bg-blue-500/40"
+                      : "bg-green-500/40"
+                  }`}
+                >
+                  <span
+                    className={`w-2 h-2 rounded-full  mt-[9px] ${
+                      task?.status === "Pending"
+                        ? "bg-gray-500"
+                        : task?.status === "In Progress"
+                        ? "bg-blue-500"
+                        : "bg-green-500"
+                    }`}
+                  ></span>
+                  <p>{task?.status}</p>
+                </span>
+
+                <p>Due Date: {format(new Date(task?.due_date), "PPP")}</p>
               </CardContent>
-              <CardFooter>
-                <p>Created At: {task.created_at.substring(0, 10)}</p>
-              </CardFooter>
             </Card>
           )
         )}

@@ -40,6 +40,7 @@ import {
 import { CalendarIcon } from "lucide-react";
 import { fetchCreateTask } from "@/features/TaskSlice";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 const FormSchema = z.object({
   title: z
@@ -61,6 +62,15 @@ const FormSchema = z.object({
 function CreateTaskPage() {
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
+
+  const userInfo = useSelector((state: any) => state.user.userInfo);
+
+  useEffect(() => {
+    if (!userInfo) {
+      navigate("/login");
+    }
+  }, [userInfo]);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {

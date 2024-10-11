@@ -37,6 +37,7 @@ function TaskUpdatePage() {
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
 
+  const userInfo = useSelector((state: any) => state.user.userInfo);
   const getTask = useSelector((state: any) => state.task.getTask);
   const task = getTask?.task;
   const getTaskStatus = useSelector((state: any) => state.task.getTaskStatus);
@@ -49,7 +50,6 @@ function TaskUpdatePage() {
     status: task?.status,
     dueDate: task?.due_date,
   });
-  console.log(changedTask);
 
   const [editTitle, setEditTitle] = useState(false);
   const [editDescription, setEditDescription] = useState(false);
@@ -58,7 +58,11 @@ function TaskUpdatePage() {
   const [editDueDate, setEditDueDate] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchGetTask(taskId as string));
+    if (!userInfo) {
+      navigate("/login");
+    } else {
+      dispatch(fetchGetTask(taskId as string));
+    }
   }, [taskId, dispatch]);
 
   useEffect(() => {
@@ -197,13 +201,6 @@ function TaskUpdatePage() {
                   </div>
                   {editPriority ? (
                     <Select
-                      value={
-                        changedTask.priority === "Low"
-                          ? "LOW"
-                          : changedTask.priority === "Medium"
-                          ? "MEDIUM"
-                          : "HIGH"
-                      }
                       onValueChange={(e) =>
                         setChangedTask({
                           ...changedTask,
@@ -249,13 +246,6 @@ function TaskUpdatePage() {
                   </div>
                   {editStatus ? (
                     <Select
-                      value={
-                        changedTask.status === "Pending"
-                          ? "PENDING"
-                          : changedTask.status === "In Progress"
-                          ? "IN_PROGRESS"
-                          : "COMPLETED"
-                      }
                       onValueChange={(e) =>
                         setChangedTask({
                           ...changedTask,

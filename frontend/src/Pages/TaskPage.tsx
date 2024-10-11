@@ -28,7 +28,11 @@ function TaskPage() {
   const getTaskStatus = useSelector((state: any) => state.task.getTaskStatus);
 
   useEffect(() => {
-    dispatch(fetchGetTask(taskId as string));
+    if (!userInfo) {
+      navigate("/login");
+    } else {
+      dispatch(fetchGetTask(taskId as string));
+    }
   }, [taskId, dispatch]);
 
   const daysLeft = (dueDate: string) => {
