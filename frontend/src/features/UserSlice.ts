@@ -65,6 +65,47 @@ export const fetchLogin = createAsyncThunk(
   }
 );
 
+export const fetchAccessToken = createAsyncThunk(
+  "user/accessToken",
+  async (refreshToken: string, { rejectWithValue }) => {
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const { data } = await axios.post(
+        `${baseUrl}/api/token/refresh/`,
+        { refresh: refreshToken },
+        config
+      );
+
+      const userInfoTaskify = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("userInfoTaskify="))
+        ?.split("=")[1];
+
+      if (userInfoTaskify) {
+        const parsedCookie = JSON.parse(decodeURIComponent(userInfoTaskify));
+
+        parsedCookie.access = data.access;
+
+        document.cookie = `userInfoTaskify=${encodeURIComponent(
+          JSON.stringify(parsedCookie)
+        )}; path=/`;
+      }
+
+      return data.data;
+    } catch (error: any) {
+      const errorMessage =
+        error.response && error.response.data
+          ? error.response.data.message
+          : error.message;
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
 function getCookie(name: string) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -88,6 +129,10 @@ const userSlice = createSlice({
     userInfo: userInfoCookie ? JSON.parse(userInfoCookie) : null,
     userInfoStatus: "idle",
     userInfoError: {},
+
+    getAccessToken: {},
+    getAccessTokenStatus: "idle",
+    getAccessTokenError: {},
   },
   reducers: {
     logout: (state) => {
@@ -95,6 +140,11 @@ const userSlice = createSlice({
       state.userInfo = null;
       state.userInfoStatus = "idle";
       state.userInfoError = {};
+    },
+    resetGetAccessToken: (state) => {
+      state.getAccessToken = {};
+      state.getAccessTokenStatus = "idle";
+      state.getAccessTokenError = {};
     },
   },
   extraReducers: (builder) => {
@@ -123,9 +173,22 @@ const userSlice = createSlice({
       .addCase(fetchLogin.rejected, (state, action) => {
         state.userInfoStatus = "failed";
         state.userInfoError = action.payload as string;
+      })
+
+      // get access token
+      .addCase(fetchAccessToken.pending, (state) => {
+        state.getAccessTokenStatus = "loading";
+      })
+      .addCase(fetchAccessToken.fulfilled, (state, action) => {
+        state.getAccessTokenStatus = "succeeded";
+        state.getAccessToken = action.payload;
+      })
+      .addCase(fetchAccessToken.rejected, (state, action) => {
+        state.getAccessTokenStatus = "failed";
+        state.getAccessTokenError = action.payload as string;
       });
   },
 });
 
-export const { logout } = userSlice.actions;
+export const { logout, resetGetAccessToken } = userSlice.actions;
 export default userSlice.reducer;

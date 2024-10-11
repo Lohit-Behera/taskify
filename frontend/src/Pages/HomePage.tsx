@@ -35,7 +35,7 @@ function HomePage() {
       dispatch(resetTasks());
       dispatch(fetchGetUserTasks());
     }
-  }, [userInfo, navigate, dispatch]);
+  }, []);
 
   useEffect(() => {
     if (getUserTasksStatus === "succeeded") {
