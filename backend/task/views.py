@@ -15,12 +15,16 @@ class StandardResultsSetPagination(PageNumberPagination):
     max_page_size = 100
     
     def get_paginated_response(self, data):
-        return Response({
+        response = {
             'total_pages': self.page.paginator.num_pages,
             'current_page': self.page.number,
             'has_next_page': self.page.has_next(),
             'results': data
-        })
+        }
+        if self.page.has_next():
+            response['next_page'] = self.page.next_page_number()
+            
+        return Response(response)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -40,9 +44,6 @@ def create_task(request):
         
         iso_date = due_date
         formatted_date = datetime.strptime(iso_date, "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%Y-%m-%d")
-        
-        print(priority, type(priority), task_status, type(task_status))
-
         
         task = Task.objects.create(
             user=user,
@@ -67,14 +68,19 @@ def get_user_tasks(request):
         tasks = Task.objects.filter(user=request.user).order_by('-created_at')
         paginator = StandardResultsSetPagination()
         result_page = paginator.paginate_queryset(tasks, request)
+        
         serializer = TaskSerializer(result_page, many=True)
         response_data = {
-                    'message': 'Tasks fetched successfully',
-                    'total_pages': paginator.page.paginator.num_pages,
-                    'current_page': paginator.page.number,
-                    'has_next_page': paginator.page.has_next(),
-                    'tasks': serializer.data
-                }
+            'message': 'Tasks fetched successfully',
+            'total_pages': paginator.page.paginator.num_pages,
+            'current_page': paginator.page.number,
+            'has_next_page': paginator.page.has_next(),
+            'tasks': serializer.data
+        }
+
+        if paginator.page.has_next():
+            response_data['next_page'] = paginator.page.next_page_number()
+
         return Response(response_data)
     except Exception as e:
         print(e)
@@ -113,7 +119,6 @@ def update_task(request, pk):
             task.description = description
             
         if (due_date != "" and due_date != str(task.due_date)):
-            print(due_date , type(due_date), task.due_date, type(task.due_date))
             iso_date = due_date
             formatted_date = datetime.strptime(iso_date, "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%Y-%m-%d")
             task.due_date = formatted_date

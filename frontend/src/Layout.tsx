@@ -12,8 +12,10 @@ function Layout() {
     (state: any) => state.user.getAccessTokenStatus
   );
   useEffect(() => {
-    if (isTokenExpired(userInfo?.access)) {
-      dispatch(fetchAccessToken(userInfo?.refresh));
+    if (userInfo) {
+      if (isTokenExpired(userInfo?.access)) {
+        dispatch(fetchAccessToken(userInfo?.refresh));
+      }
     }
   }, []);
 

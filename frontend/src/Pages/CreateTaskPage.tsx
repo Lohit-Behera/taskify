@@ -36,8 +36,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-import { CalendarIcon } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowLeft, CalendarIcon, CalendarPlus2 } from "lucide-react";
 import { fetchCreateTask } from "@/features/TaskSlice";
 import { toast } from "sonner";
 import { useEffect } from "react";
@@ -95,7 +95,7 @@ function CreateTaskPage() {
     });
   }
   return (
-    <div className="min-h-[93vh] flex justify-center items-center">
+    <div className="min-h-[93vh] flex justify-center items-center my-6">
       <Card className="w-[98%] md:w-[90%]">
         <CardHeader>
           <CardTitle className="font-bold">Create Task</CardTitle>
@@ -125,7 +125,12 @@ function CreateTaskPage() {
                     <FormItem>
                       <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <Input placeholder="Description" {...field} />
+                        <Textarea
+                          className="resize-none"
+                          rows={6}
+                          placeholder="Description"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -223,7 +228,7 @@ function CreateTaskPage() {
                   )}
                 />
                 <Button size="sm" type="submit">
-                  Submit
+                  <CalendarPlus2 className="mr-2 h-4 w-4" /> Submit
                 </Button>
               </div>
             </form>
@@ -231,7 +236,7 @@ function CreateTaskPage() {
         </CardContent>
         <CardFooter>
           <Button className="w-full" size="sm" onClick={() => navigate(-1)}>
-            Back
+            <ArrowLeft className="mr-2 h-4 w-4" /> Go Back
           </Button>
         </CardFooter>
       </Card>

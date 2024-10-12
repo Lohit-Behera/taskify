@@ -54,7 +54,7 @@ export const fetchCreateTask = createAsyncThunk(
 
 export const fetchGetUserTasks = createAsyncThunk(
   "getUser/tasks",
-  async (_, { rejectWithValue, getState }) => {
+  async (page: number, { rejectWithValue, getState }) => {
     try {
       const { user: { userInfo } = {} } = getState() as RootState;
       const config = {
@@ -63,7 +63,10 @@ export const fetchGetUserTasks = createAsyncThunk(
           Authorization: `Bearer ${userInfo?.access}`,
         },
       };
-      const { data } = await axios.get(`${baseUrl}/api/tasks/get/`, config);
+      const { data } = await axios.get(
+        `${baseUrl}/api/tasks/get?page=${page}`,
+        config
+      );
       return data;
     } catch (error: any) {
       const errorMessage =

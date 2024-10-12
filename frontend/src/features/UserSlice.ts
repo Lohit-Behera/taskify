@@ -54,7 +54,7 @@ export const fetchLogin = createAsyncThunk(
       document.cookie = `userInfoTaskify=${encodeURIComponent(
         JSON.stringify(data.data)
       )}; path=/; max-age=${60 * 24 * 60 * 60}; secure; sameSite=None;`;
-      return data.data;
+      return data;
     } catch (error: any) {
       const errorMessage =
         error.response && error.response.data
@@ -168,7 +168,7 @@ const userSlice = createSlice({
       })
       .addCase(fetchLogin.fulfilled, (state, action) => {
         state.userInfoStatus = "succeeded";
-        state.userInfo = action.payload;
+        state.userInfo = action.payload.data;
       })
       .addCase(fetchLogin.rejected, (state, action) => {
         state.userInfoStatus = "failed";

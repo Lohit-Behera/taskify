@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, CalendarIcon, Pencil, X } from "lucide-react";
+import { ArrowLeft, CalendarIcon, Pencil, SaveIcon, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Popover,
@@ -333,7 +333,7 @@ function TaskUpdatePage() {
                 <ArrowLeft className="mr-2 h-4 w-4" /> Go Back
               </Button>
               <Button className="w-full" size="sm" onClick={handleUpdateTask}>
-                <ArrowLeft className="mr-2 h-4 w-4" /> Save
+                <SaveIcon className="mr-2 h-4 w-4" /> Save
               </Button>
             </CardFooter>
           </Card>
