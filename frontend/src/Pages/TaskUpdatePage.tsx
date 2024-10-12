@@ -31,6 +31,8 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import TaskUpdatePageLoader from "@/components/Loader/TaskUpdatePageLoader";
+import ServerErrorPage from "./Error/ServerErrorPage";
 
 function TaskUpdatePage() {
   const { taskId } = useParams();
@@ -93,9 +95,9 @@ function TaskUpdatePage() {
   return (
     <>
       {getTaskStatus === "loading" || getTaskStatus === "idle" ? (
-        <div>Loading...</div>
+        <TaskUpdatePageLoader />
       ) : getTaskStatus === "failed" ? (
-        <div>Error</div>
+        <ServerErrorPage />
       ) : (
         <div className="min-h-[93vh] flex justify-center items-center">
           <Card className="w-[98%] md:w-[90%]">

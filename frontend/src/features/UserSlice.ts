@@ -146,6 +146,10 @@ const userSlice = createSlice({
       state.getAccessTokenStatus = "idle";
       state.getAccessTokenError = {};
     },
+    reSignIn: (state) => {
+      document.cookie = `userInfoTaskify=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+      state.userInfo = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -190,5 +194,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { logout, resetGetAccessToken } = userSlice.actions;
+export const { logout, resetGetAccessToken, reSignIn } = userSlice.actions;
 export default userSlice.reducer;

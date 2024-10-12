@@ -16,6 +16,8 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, RefreshCcw, Trash } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import TaskPageLoader from "@/components/Loader/TaskPageLoader";
+import ServerErrorPage from "./Error/ServerErrorPage";
 
 function TaskPage() {
   const { taskId } = useParams();
@@ -62,9 +64,9 @@ function TaskPage() {
   return (
     <>
       {getTaskStatus === "loading" || getTaskStatus === "idle" ? (
-        <div>Loading...</div>
+        <TaskPageLoader />
       ) : getTaskStatus === "failed" ? (
-        <div>Error</div>
+        <ServerErrorPage />
       ) : (
         <div className="min-h-[93vh] my-6 flex justify-center items-center">
           <Card className="w-[98%] md:w-[90%]">
@@ -148,7 +150,6 @@ function TaskPage() {
                   className="rounded-md border w-[280px]"
                 />
               </div>
-              <p>{task?.due_date}</p>
             </CardContent>
             <CardFooter className="space-x-4">
               <Button className="w-full" size="sm" onClick={() => navigate(-1)}>

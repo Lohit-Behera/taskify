@@ -18,6 +18,8 @@ import {
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { ArrowUp, Loader2 } from "lucide-react";
+import ServerErrorPage from "./Error/ServerErrorPage";
+import HomePageLoader from "@/components/Loader/HomePageLoader";
 
 function HomePage() {
   const dispatch = useDispatch<any>();
@@ -34,14 +36,12 @@ function HomePage() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
-
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
   };
-
   useEffect(() => {
     if (!userInfo) {
       navigate("/login");
@@ -94,9 +94,9 @@ function HomePage() {
   return (
     <>
       {getUserTasksStatus === "loading" && tasks.length === 0 ? (
-        <p>Loading...</p>
+        <HomePageLoader />
       ) : getUserTasksStatus === "failed" ? (
-        <p>Something went wrong</p>
+        <ServerErrorPage />
       ) : (
         <div className="my-6 w-[98%] md:w-[90%] mx-auto">
           {tasks.length === 0 ? (
@@ -169,7 +169,7 @@ function HomePage() {
                           }`}
                         >
                           <span
-                            className={`w-2 h-2 rounded-full  mt-[9px] ${
+                            className={`w-2 h-2 rounded-full mt-[9px] ${
                               task?.status === "Pending"
                                 ? "bg-gray-500"
                                 : task?.status === "In Progress"

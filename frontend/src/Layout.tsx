@@ -4,6 +4,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { isTokenExpired } from "./utils/isTokenExpired";
 import { fetchAccessToken, resetGetAccessToken } from "./features/UserSlice";
 import { useEffect } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import ServerErrorPage from "./Pages/Error/ServerErrorPage";
 
 function Layout() {
   const dispatch = useDispatch<any>();
@@ -27,13 +29,13 @@ function Layout() {
   }, [getAccessTokenStatus]);
 
   return (
-    <>
+    <ErrorBoundary fallback={<ServerErrorPage />}>
       <Header />
       <main>
         <Outlet />
         <ScrollRestoration />
       </main>
-    </>
+    </ErrorBoundary>
   );
 }
 
